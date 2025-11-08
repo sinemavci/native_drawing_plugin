@@ -5,14 +5,18 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationListener
 import android.location.LocationManager
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.Priority
 import com.kotlin.sensor_drawing_plugin.ServiceLocator
 import com.kotlin.sensor_drawing_plugin.coordinate.Coordinate
 import com.kotlin.sensor_drawing_plugin.coordinate.Location
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.UUID
 
 class LocationDataSource {
@@ -26,42 +30,44 @@ class LocationDataSource {
         ServiceLocator.sensorContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
-    suspend fun start() {
-        try {
-            if (checkLocationPermission()) {
+    suspend fun start() = withContext(Dispatchers.Main.immediate) {
+//    val mainLooper = Looper.getMainLooper()
+//        Handler(mainLooper).post {
+            try {
+                if (checkLocationPermission()) {
+                    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            LOCATION_REQUEST_INTERVAL,
+                            LOCATION_REQUEST_DISTANCE,
+                            locationListener
+                        ) // listener
+                    }
 
-                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,
-                        LOCATION_REQUEST_INTERVAL,
-                        LOCATION_REQUEST_DISTANCE,
-                        locationListener
-                    ) // listener
-                }
+                    if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                        locationManager.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER,
+                            LOCATION_REQUEST_INTERVAL,
+                            LOCATION_REQUEST_DISTANCE,
+                            locationListener
+                        )
+                    }
 
-                if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    // as a backup
                     locationManager.requestLocationUpdates(
-                        LocationManager.NETWORK_PROVIDER,
+                        LocationManager.PASSIVE_PROVIDER,
                         LOCATION_REQUEST_INTERVAL,
                         LOCATION_REQUEST_DISTANCE,
                         locationListener
                     )
+                     statusChangedFlow.emit(LocationDataSourceStatus.STARTED)
+                } else {
+                      statusChangedFlow.emit(LocationDataSourceStatus.PERMISSION_NOT_FOUND)
                 }
-
-                // as a backup
-                locationManager.requestLocationUpdates(
-                    LocationManager.PASSIVE_PROVIDER,
-                    LOCATION_REQUEST_INTERVAL,
-                    LOCATION_REQUEST_DISTANCE,
-                    locationListener
-                )
-                statusChangedFlow.emit(LocationDataSourceStatus.STARTED)
-            } else {
-                statusChangedFlow.emit(LocationDataSourceStatus.PERMISSION_NOT_FOUND)
+            } catch (e: Exception) {
+                throw Exception("An error occurred while starting location source: ${e.message}")
             }
-        } catch (e: Exception) {
-            throw Exception("An error occurred while starting location source: ${e.message}")
-        }
+//        }
     }
 
     suspend fun stop() {
@@ -73,6 +79,7 @@ class LocationDataSource {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private val locationListener = LocationListener { location ->
         var lastGpsLocation: android.location.Location? = null
         var lastNetworkLocation: android.location.Location? = null
@@ -94,8 +101,8 @@ class LocationDataSource {
                 mostAccurateLocation.altitude
             )
 
-            //todo
-            ServiceLocator.scope.launch {
+            ServiceLocator.scope.launch(Dispatchers.Main) {
+                Log.e("location", "location: ${mostAccurateLocation.latitude}")
                 bearingChangedFlow.emit(mostAccurateLocation.bearing.toDouble())
                 locationChangedFlow.emit(
                     Location(
