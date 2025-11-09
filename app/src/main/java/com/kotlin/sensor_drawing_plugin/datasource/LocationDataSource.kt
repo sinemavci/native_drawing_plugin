@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationListener
 import android.location.LocationManager
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.Priority
@@ -44,7 +43,7 @@ class LocationDataSource {
                         ) // listener
                     }
 
-                    if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                   else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                         locationManager.requestLocationUpdates(
                             LocationManager.NETWORK_PROVIDER,
                             LOCATION_REQUEST_INTERVAL,
@@ -52,14 +51,16 @@ class LocationDataSource {
                             locationListener
                         )
                     }
+                    else {
 
-                    // as a backup
-                    locationManager.requestLocationUpdates(
-                        LocationManager.PASSIVE_PROVIDER,
-                        LOCATION_REQUEST_INTERVAL,
-                        LOCATION_REQUEST_DISTANCE,
-                        locationListener
-                    )
+                        // as a backup
+                        locationManager.requestLocationUpdates(
+                            LocationManager.PASSIVE_PROVIDER,
+                            LOCATION_REQUEST_INTERVAL,
+                            LOCATION_REQUEST_DISTANCE,
+                            locationListener
+                        )
+                    }
                      statusChangedFlow.emit(LocationDataSourceStatus.STARTED)
                 } else {
                       statusChangedFlow.emit(LocationDataSourceStatus.PERMISSION_NOT_FOUND)
@@ -102,7 +103,6 @@ class LocationDataSource {
             )
 
             ServiceLocator.scope.launch(Dispatchers.Main) {
-                Log.e("location", "location: ${mostAccurateLocation.latitude}")
                 bearingChangedFlow.emit(mostAccurateLocation.bearing.toDouble())
                 locationChangedFlow.emit(
                     Location(
