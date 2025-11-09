@@ -6,7 +6,8 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 
 @SuppressLint("StaticFieldLeak")
-internal object ServiceLocator {
+//todo: should it be internal?
+object ServiceLocator {
     lateinit var sensorContext: Context
 
     @OptIn(DelicateCoroutinesApi::class)
