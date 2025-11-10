@@ -1,4 +1,4 @@
-package com.kotlin.sensor_drawing_plugin.datasource
+package com.kotlin.sensor_drawing_plugin.sensor
 
 import android.Manifest
 import android.content.Context
@@ -18,12 +18,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
-class LocationDataSource {
+class Sensor {
     var id = UUID.randomUUID().mostSignificantBits.toString()
     val locationChangedFlow = MutableSharedFlow<Location>()
 
     val bearingChangedFlow = MutableSharedFlow<Double>()
-    val statusChangedFlow = MutableSharedFlow<LocationDataSourceStatus>()
+    val statusChangedFlow = MutableSharedFlow<SensorStatus>()
 
     private val locationManager: LocationManager =
         ServiceLocator.sensorContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -61,9 +61,9 @@ class LocationDataSource {
                             locationListener
                         )
                     }
-                     statusChangedFlow.emit(LocationDataSourceStatus.STARTED)
+                     statusChangedFlow.emit(SensorStatus.STARTED)
                 } else {
-                      statusChangedFlow.emit(LocationDataSourceStatus.PERMISSION_NOT_FOUND)
+                      statusChangedFlow.emit(SensorStatus.PERMISSION_NOT_FOUND)
                 }
             } catch (e: Exception) {
                 throw Exception("An error occurred while starting location source: ${e.message}")
@@ -74,7 +74,7 @@ class LocationDataSource {
     suspend fun stop() {
         try {
             locationManager.removeUpdates(locationListener)
-            statusChangedFlow.emit(LocationDataSourceStatus.STOPPED)
+            statusChangedFlow.emit(SensorStatus.STOPPED)
         } catch (e: Exception) {
             throw Exception("An error occurred while stopping location source: ${e.message}")
         }
@@ -128,7 +128,7 @@ class LocationDataSource {
                 ) == PackageManager.PERMISSION_GRANTED
     }
 
-    internal companion object {
+    internal companion object Companion {
         const val LOCATION_REQUEST_PRIORITY: Int = Priority.PRIORITY_HIGH_ACCURACY
         const val LOCATION_REQUEST_INTERVAL: Long = 1000 // milliseconds
         const val LOCATION_REQUEST_DISTANCE: Float = 10f // meters
