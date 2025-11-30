@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationListener
 import android.location.LocationManager
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.Priority
+import com.kotlin.sensor_drawing_plugin.DrawingManager
 import com.kotlin.sensor_drawing_plugin.ServiceLocator
 import com.kotlin.sensor_drawing_plugin.coordinate.Coordinate
 import com.kotlin.sensor_drawing_plugin.coordinate.Location
@@ -101,6 +103,9 @@ class Sensor {
                 mostAccurateLocation.longitude,
                 mostAccurateLocation.altitude
             )
+            if(DrawingManager.pathView != null) {
+                DrawingManager.pathView!!.addGeoPoint(location.latitude, location.longitude)
+            }
 
             ServiceLocator.scope.launch(Dispatchers.Main) {
                 bearingChangedFlow.emit(mostAccurateLocation.bearing.toDouble())
