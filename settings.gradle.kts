@@ -29,6 +29,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "sensor_drawing_plugin"
+rootProject.name = "native_drawing_plugin"
 include(":app")
  

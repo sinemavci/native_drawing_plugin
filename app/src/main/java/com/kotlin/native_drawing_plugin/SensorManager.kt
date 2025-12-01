@@ -1,8 +1,8 @@
-package com.kotlin.sensor_drawing_plugin
+package com.kotlin.native_drawing_plugin
 
 import android.Manifest
 import androidx.annotation.RequiresPermission
-import com.kotlin.sensor_drawing_plugin.sensor.Sensor
+import com.kotlin.native_drawing_plugin.sensor.Sensor
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
 

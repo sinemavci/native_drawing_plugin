@@ -1,4 +1,4 @@
-package com.kotlin.sensor_drawing_plugin.sensor
+package com.kotlin.native_drawing_plugin.sensor
 
 enum class SensorStatus(value: String) {
     INIT("INIT"),

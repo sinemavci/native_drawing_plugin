@@ -6,13 +6,13 @@ plugins {
 }
 
 android {
-    namespace = "com.kotlin.sensor_drawing_plugin"
+    namespace = "com.kotlin.native_drawing_plugin"
     compileSdk = 36
 
     defaultConfig {
 //        applicationId = "com.kotlin.sensor_drawing_plugin"
         minSdk = 26
-        targetSdk = 36
+        //targetSdk = 36
 //        versionCode = 1
 //        versionName = "1.0"
 

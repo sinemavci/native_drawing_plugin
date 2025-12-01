@@ -1,4 +1,4 @@
-package com.kotlin.sensor_drawing_plugin.ui.theme
+package com.kotlin.native_drawing_plugin.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

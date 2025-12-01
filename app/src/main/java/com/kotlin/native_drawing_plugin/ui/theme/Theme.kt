@@ -1,6 +1,5 @@
-package com.kotlin.sensor_drawing_plugin.ui.theme
+package com.kotlin.native_drawing_plugin.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

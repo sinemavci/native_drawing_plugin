@@ -1,4 +1,4 @@
-package com.kotlin.sensor_drawing_plugin.coordinate
+package com.kotlin.native_drawing_plugin.coordinate
 
 /**
  * Point in a geodetic spatial reference DecimalDegrees

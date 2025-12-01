@@ -1,4 +1,4 @@
-package com.kotlin.sensor_drawing_plugin.coordinate
+package com.kotlin.native_drawing_plugin.coordinate
 
 class Location(
     var coordinate: Coordinate,

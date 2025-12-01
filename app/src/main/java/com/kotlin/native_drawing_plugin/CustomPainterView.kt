@@ -1,4 +1,4 @@
-package com.kotlin.sensor_drawing_plugin
+package com.kotlin.native_drawing_plugin
 
 import android.content.Context
 import android.graphics.Canvas

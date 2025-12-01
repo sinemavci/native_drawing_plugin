@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Sensor_drawing_plugin">
         <provider
-            android:name="com.kotlin.sensor_drawing_plugin.SensorInitProvider"
+            android:name="com.kotlin.native_drawing_plugin.SensorInitProvider"
             android:authorities="${applicationId}.sensorinitprovider"
             android:exported="false"
             android:initOrder="100" />

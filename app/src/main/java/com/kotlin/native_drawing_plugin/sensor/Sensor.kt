@@ -1,18 +1,17 @@
-package com.kotlin.sensor_drawing_plugin.sensor
+package com.kotlin.native_drawing_plugin.sensor
 
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationListener
 import android.location.LocationManager
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.Priority
-import com.kotlin.sensor_drawing_plugin.DrawingManager
-import com.kotlin.sensor_drawing_plugin.ServiceLocator
-import com.kotlin.sensor_drawing_plugin.coordinate.Coordinate
-import com.kotlin.sensor_drawing_plugin.coordinate.Location
+import com.kotlin.native_drawing_plugin.DrawingManager
+import com.kotlin.native_drawing_plugin.ServiceLocator
+import com.kotlin.native_drawing_plugin.coordinate.Coordinate
+import com.kotlin.native_drawing_plugin.coordinate.Location
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
