@@ -2,11 +2,14 @@ package com.kotlin.native_drawing_plugin
 
 import android.content.Context
 import android.graphics.*
+import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import androidx.annotation.RequiresApi
+import kotlin.collections.mutableListOf
 import kotlin.math.abs
 
 class PaintBoxView @JvmOverloads constructor(
@@ -14,6 +17,8 @@ class PaintBoxView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : SurfaceView(context, attrs, defStyleAttr), SurfaceHolder.Callback {
+
+    val paintEditor = PaintEditor(paintBoxView = this)
 
     // Default paint
     private val paintDefaults = Paint().apply {
@@ -38,6 +43,8 @@ class PaintBoxView @JvmOverloads constructor(
     // Offscreen cache
     private var extraBitmap: Bitmap? = null
     private var extraCanvas: Canvas? = null
+
+    private var undoStrokes = mutableListOf<Stroke>()
 
     // Touch smoothing
     private var lastX = 0f
@@ -180,9 +187,21 @@ class PaintBoxView @JvmOverloads constructor(
         redrawSurface()
     }
 
-    fun undo() {
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+    internal fun undo() {
         if (strokes.isNotEmpty()) {
-            strokes.removeAt(strokes.size - 1)
+            val stroke = strokes[strokes.size - 1]
+            undoStrokes.addFirst(stroke)
+            strokes.remove(stroke)
+            redrawCachedBitmap()
+            redrawSurface()
+        }
+    }
+
+    internal fun redo() {
+        if(undoStrokes.isNotEmpty()) {
+            strokes.add(undoStrokes[0])
+            undoStrokes.removeAt(0)
             redrawCachedBitmap()
             redrawSurface()
         }
