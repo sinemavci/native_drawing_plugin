@@ -1,5 +1,6 @@
 package com.kotlin.native_drawing_plugin
 
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
 
@@ -18,5 +19,9 @@ class PaintEditor(
 
     override fun reset() {
         paintBoxView.reset()
+    }
+
+    override fun import(bitmap: Bitmap) {
+        paintBoxView.import(bitmap)
     }
 }

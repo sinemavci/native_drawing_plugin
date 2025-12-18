@@ -231,7 +231,33 @@ class PaintBoxView @JvmOverloads constructor(
         paintDefaults.strokeWidth = widthPx
     }
 
-    fun exportBitmap(): Bitmap? {
+    fun export(): Bitmap? {
         return extraBitmap?.copy(extraBitmap!!.config!!, false)
+    }
+
+    fun import(bitmap: Bitmap) {
+        // Clear history
+        strokes.clear()
+        undoStrokes.clear()
+
+        // Recreate offscreen buffer if needed
+        if (extraBitmap == null ||
+            extraBitmap?.width != bitmap.width ||
+            extraBitmap?.height != bitmap.height
+        ) {
+            extraBitmap?.recycle()
+            extraBitmap = Bitmap.createBitmap(
+                bitmap.width,
+                bitmap.height,
+                Bitmap.Config.ARGB_8888
+            )
+            extraCanvas = Canvas(extraBitmap!!)
+        }
+
+        // Draw imported bitmap
+        extraCanvas?.drawColor(Color.WHITE)
+        extraCanvas?.drawBitmap(bitmap, 0f, 0f, null)
+
+        redrawSurface()
     }
 }
