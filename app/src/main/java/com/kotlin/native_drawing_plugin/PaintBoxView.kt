@@ -207,6 +207,15 @@ class PaintBoxView @JvmOverloads constructor(
         }
     }
 
+    internal fun reset() {
+        if (strokes.isNotEmpty()) {
+            strokes.clear()
+            undoStrokes.clear()
+            redrawCachedBitmap()
+            redrawSurface()
+        }
+    }
+
     private fun redrawCachedBitmap() {
         extraCanvas?.drawColor(Color.WHITE)
         for (s in strokes) {
