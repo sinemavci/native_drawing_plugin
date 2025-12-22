@@ -13,4 +13,10 @@ abstract class IPaintEditor {
 
     open val isCanUndo: Boolean = false
 
+    open fun setEnable(isEnable: Boolean) {}
+
+    open fun isEnable(): Boolean {
+        return true
+    }
+
 }

@@ -11,14 +11,16 @@ import android.view.SurfaceView
 import androidx.annotation.RequiresApi
 import kotlin.collections.mutableListOf
 import kotlin.math.abs
+import androidx.core.graphics.createBitmap
 
 class PaintBoxView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : SurfaceView(context, attrs, defStyleAttr), SurfaceHolder.Callback {
-
     val paintEditor = PaintEditor(paintBoxView = this)
+
+    private var isPaintBoxViewEnable = true
 
     // Default paint
     private val paintDefaults = Paint().apply {
@@ -90,6 +92,7 @@ class PaintBoxView @JvmOverloads constructor(
     // -------------------------------------------------------------------------
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if(!isPaintBoxViewEnable) return false
         val pointerIndex = event.actionIndex
         val x = event.getX(pointerIndex)
         val y = event.getY(pointerIndex)
@@ -236,9 +239,10 @@ class PaintBoxView @JvmOverloads constructor(
     }
 
     fun import(bitmap: Bitmap) {
+        if(!isPaintBoxViewEnable) return
         // Clear history
-        strokes.clear()
-        undoStrokes.clear()
+//        strokes.clear()
+//        undoStrokes.clear()
 
         // Recreate offscreen buffer if needed
         if (extraBitmap == null ||
@@ -246,11 +250,7 @@ class PaintBoxView @JvmOverloads constructor(
             extraBitmap?.height != bitmap.height
         ) {
             extraBitmap?.recycle()
-            extraBitmap = Bitmap.createBitmap(
-                bitmap.width,
-                bitmap.height,
-                Bitmap.Config.ARGB_8888
-            )
+            extraBitmap = createBitmap(bitmap.width, bitmap.height)
             extraCanvas = Canvas(extraBitmap!!)
         }
 
@@ -259,5 +259,15 @@ class PaintBoxView @JvmOverloads constructor(
         extraCanvas?.drawBitmap(bitmap, 0f, 0f, null)
 
         redrawSurface()
+    }
+
+    fun setEnable(isEnable: Boolean) {
+        Log.e("setEnable sdk", "setEnable sdk: ${isEnable}")
+        isPaintBoxViewEnable = isEnable
+    }
+
+    fun isEnable(): Boolean {
+        Log.e("isEnable sdk", "isEnable sdk: ${isPaintBoxViewEnable}")
+        return isPaintBoxViewEnable
     }
 }
