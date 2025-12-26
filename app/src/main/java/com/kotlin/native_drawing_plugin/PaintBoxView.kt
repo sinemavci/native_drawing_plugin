@@ -241,16 +241,21 @@ class PaintBoxView @JvmOverloads constructor(
     private fun bitmapToFile(
         bitmap: Bitmap?,
         path: String,
-        mimeType: String,
+        mimeType: MimeType,
         fileName: String? = "image_${System.currentTimeMillis()}",
     ): File {
         val dir = File(path, "images")
         if (!dir.exists()) dir.mkdirs()
 
-        val file = File(dir, "${fileName}.${mimeType}")
+        val file = File(dir, "${fileName}.${mimeType.extension}")
         val outputStream = FileOutputStream(file)
 
-        bitmap?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        if(mimeType == MimeType.PNG) {
+            bitmap?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        }
+        else if(mimeType == MimeType.JPEG) {
+            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        }
         outputStream.flush()
         outputStream.close()
         Log.e("PaintEditorController", "Image saved to ${file.absolutePath}")
@@ -258,7 +263,7 @@ class PaintBoxView @JvmOverloads constructor(
         return file
     }
 
-    fun export(path: String, mimeType: String, fileName: String?) {
+    fun export(path: String, mimeType: MimeType, fileName: String?) {
         val bitmap = extraBitmap?.copy(extraBitmap!!.config!!, false)
         bitmapToFile(bitmap, path, mimeType, fileName)
     }

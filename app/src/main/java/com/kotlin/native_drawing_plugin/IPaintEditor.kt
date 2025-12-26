@@ -9,7 +9,7 @@ abstract class IPaintEditor {
 
     open fun import(bitmap: Bitmap) {}
 
-    open fun export(path: String, mimeType: String, fileName: String?) {}
+    open fun export(path: String, mimeType: MimeType, fileName: String?) {}
 
     open val isCanRedo: Boolean = false
 

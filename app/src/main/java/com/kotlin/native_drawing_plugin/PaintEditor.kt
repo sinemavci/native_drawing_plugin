@@ -59,7 +59,7 @@ class PaintEditor(
         paintBoxView.import(normalizedBitmap)
     }
 
-    override fun export(path: String, mimeType: String, fileName: String?) {
+    override fun export(path: String, mimeType: MimeType, fileName: String?) {
       return paintBoxView.export(path, mimeType, fileName)
     }
 
