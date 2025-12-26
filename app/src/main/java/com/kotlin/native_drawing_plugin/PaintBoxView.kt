@@ -1,5 +1,6 @@
 package com.kotlin.native_drawing_plugin
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.os.Build
@@ -12,6 +13,8 @@ import androidx.annotation.RequiresApi
 import kotlin.collections.mutableListOf
 import kotlin.math.abs
 import androidx.core.graphics.createBitmap
+import java.io.File
+import java.io.FileOutputStream
 
 class PaintBoxView @JvmOverloads constructor(
     context: Context,
@@ -234,8 +237,30 @@ class PaintBoxView @JvmOverloads constructor(
         paintDefaults.strokeWidth = widthPx
     }
 
-    fun export(): Bitmap? {
-        return extraBitmap?.copy(extraBitmap!!.config!!, false)
+    @SuppressLint("WrongThread")
+    private fun bitmapToFile(
+        bitmap: Bitmap?,
+        path: String,
+        mimeType: String,
+        fileName: String? = "image_${System.currentTimeMillis()}",
+    ): File {
+        val dir = File(path, "images")
+        if (!dir.exists()) dir.mkdirs()
+
+        val file = File(dir, "${fileName}.${mimeType}")
+        val outputStream = FileOutputStream(file)
+
+        bitmap?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        outputStream.flush()
+        outputStream.close()
+        Log.e("PaintEditorController", "Image saved to ${file.absolutePath}")
+
+        return file
+    }
+
+    fun export(path: String, mimeType: String, fileName: String?) {
+        val bitmap = extraBitmap?.copy(extraBitmap!!.config!!, false)
+        bitmapToFile(bitmap, path, mimeType, fileName)
     }
 
     fun import(bitmap: Bitmap) {
