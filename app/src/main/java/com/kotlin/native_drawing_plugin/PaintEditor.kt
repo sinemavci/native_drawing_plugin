@@ -1,11 +1,8 @@
 package com.kotlin.native_drawing_plugin
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.graphics.scale
 
 fun normalizeBitmap(
     source: Bitmap,
@@ -34,8 +31,6 @@ fun normalizeBitmap(
     else
         resized
 }
-
-
 
 class PaintEditor(
     private val paintBoxView: PaintBoxView,
@@ -69,6 +64,14 @@ class PaintEditor(
 
     override fun setEnable(isEnable: Boolean) {
         paintBoxView.setEnable(isEnable)
+    }
+
+    override fun setPaintMode(paintMode: PaintMode) {
+        paintBoxView.setPaintMode(paintMode)
+    }
+
+    override fun getPaintMode(): PaintMode {
+        return paintBoxView.getPaintMode()
     }
 
 }

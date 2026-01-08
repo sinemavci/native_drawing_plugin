@@ -21,4 +21,10 @@ abstract class IPaintEditor {
         return true
     }
 
+    open fun setPaintMode(paintMode: PaintMode) {}
+
+    open fun getPaintMode(): PaintMode {
+        return PaintMode.PEN
+    }
+
 }

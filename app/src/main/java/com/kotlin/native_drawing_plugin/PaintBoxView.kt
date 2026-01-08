@@ -3,7 +3,6 @@ package com.kotlin.native_drawing_plugin
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
-import android.graphics.pdf.PdfDocument
 import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
@@ -23,7 +22,9 @@ class PaintBoxView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : SurfaceView(context, attrs, defStyleAttr), SurfaceHolder.Callback {
+    private var mode = PaintMode.PEN
     val paintEditor = PaintEditor(paintBoxView = this)
+
     private var exportUtil = ExportUtil()
     private val gifFrames = mutableListOf<Bitmap>()
 
@@ -100,6 +101,9 @@ class PaintBoxView @JvmOverloads constructor(
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if(!isPaintBoxViewEnable) return false
+        if(mode == PaintMode.ERASER) {
+           setStrokeColor(Color.WHITE)
+        }
         val pointerIndex = event.actionIndex
         val x = event.getX(pointerIndex)
         val y = event.getY(pointerIndex)
@@ -331,12 +335,18 @@ class PaintBoxView @JvmOverloads constructor(
     }
 
     fun setEnable(isEnable: Boolean) {
-        Log.e("setEnable sdk", "setEnable sdk: ${isEnable}")
         isPaintBoxViewEnable = isEnable
     }
 
     fun isEnable(): Boolean {
-        Log.e("isEnable sdk", "isEnable sdk: ${isPaintBoxViewEnable}")
         return isPaintBoxViewEnable
+    }
+
+    fun setPaintMode(paintMode: PaintMode) {
+        mode = paintMode
+    }
+
+    fun getPaintMode(): PaintMode {
+        return mode
     }
 }
