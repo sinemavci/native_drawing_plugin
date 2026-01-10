@@ -102,7 +102,9 @@ class PaintBoxView @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if(!isPaintBoxViewEnable) return false
         if(mode == PaintMode.ERASER) {
-           setStrokeColor(Color.WHITE)
+            setStrokeColor(Color.WHITE)
+        } else {
+            setStrokeColor(Color.BLACK)
         }
         val pointerIndex = event.actionIndex
         val x = event.getX(pointerIndex)
