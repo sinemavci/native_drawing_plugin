@@ -1,7 +1,9 @@
 package com.kotlin.native_drawing_plugin
 
-//todo: add edit mode
 enum class PaintMode() {
-    PEN,
-    ERASER,
+    PEN, //STROKE
+    ERASER, //STROKE
+    MARKER, //FILL AND STROKE
+    BUCKET, //FILL
+    BRUSH, //...
 }

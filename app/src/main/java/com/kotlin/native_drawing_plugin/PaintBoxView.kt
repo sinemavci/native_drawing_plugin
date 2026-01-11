@@ -13,7 +13,12 @@ import androidx.annotation.RequiresApi
 import kotlin.collections.mutableListOf
 import kotlin.math.abs
 import androidx.core.graphics.createBitmap
+import androidx.core.graphics.toColor
 import com.kotlin.native_drawing_plugin.export_util.ExportUtil
+import com.kotlin.native_drawing_plugin.tool.IPaintTool
+import com.kotlin.native_drawing_plugin.tool.PaintToolFactory
+import com.kotlin.native_drawing_plugin.tool.PenTool
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
 import java.io.FileOutputStream
 
@@ -22,9 +27,8 @@ class PaintBoxView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : SurfaceView(context, attrs, defStyleAttr), SurfaceHolder.Callback {
-    private var mode = PaintMode.PEN
     val paintEditor = PaintEditor(paintBoxView = this)
-
+    private var tool: IPaintTool = PenTool()
     private var exportUtil = ExportUtil()
     private val gifFrames = mutableListOf<Bitmap>()
 
@@ -101,18 +105,12 @@ class PaintBoxView @JvmOverloads constructor(
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if(!isPaintBoxViewEnable) return false
-        if(mode == PaintMode.ERASER) {
-            setStrokeColor(Color.WHITE)
-        } else {
-            setStrokeColor(Color.BLACK)
-        }
         val pointerIndex = event.actionIndex
         val x = event.getX(pointerIndex)
         val y = event.getY(pointerIndex)
         val pressure = event.getPressure(pointerIndex)
 
         when (event.actionMasked) {
-
             MotionEvent.ACTION_DOWN -> {
                 startStroke(x, y, pressure)
                 redrawSurface()
@@ -141,7 +139,6 @@ class PaintBoxView @JvmOverloads constructor(
     private fun startStroke(x: Float, y: Float, pressure: Float) {
         currentPath = Path()
         currentPath.moveTo(x, y)
-        currentPaint = Paint(paintDefaults)
         currentPaint.strokeWidth = paintDefaults.strokeWidth * pressure
 
         lastX = x
@@ -345,10 +342,11 @@ class PaintBoxView @JvmOverloads constructor(
     }
 
     fun setPaintMode(paintMode: PaintMode) {
-        mode = paintMode
+        tool = PaintToolFactory.create(paintMode)
+        currentPaint = tool.createPaint(currentPaint)
     }
 
     fun getPaintMode(): PaintMode {
-        return mode
+        return tool.paintMode
     }
 }
