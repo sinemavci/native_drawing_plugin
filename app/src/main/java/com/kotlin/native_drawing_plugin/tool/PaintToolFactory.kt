@@ -7,9 +7,9 @@ object PaintToolFactory {
         return when(mode) {
             PaintMode.PEN -> PenTool()
             PaintMode.BRUSH -> PenTool()
-            PaintMode.BUCKET -> PenTool()
+            PaintMode.BUCKET -> BucketTool()
             PaintMode.ERASER -> EraserTool()
-            PaintMode.MARKER -> PenTool()
+            PaintMode.MARKER -> MarkerTool()
         }
     }
 }

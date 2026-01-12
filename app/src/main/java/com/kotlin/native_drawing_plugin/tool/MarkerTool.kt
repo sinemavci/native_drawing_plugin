@@ -1,10 +1,9 @@
 package com.kotlin.native_drawing_plugin.tool
 
-import android.graphics.Color
 import android.graphics.Paint
 import com.kotlin.native_drawing_plugin.PaintMode
 
-class EraserTool : IPaintTool {
+class MarkerTool : IPaintTool {
     override var paintMode: PaintMode = PaintMode.ERASER
 
     override fun onStart() {
@@ -21,8 +20,8 @@ class EraserTool : IPaintTool {
 
     override fun createPaint(paint: Paint, color: Int): Paint {
         return paint.apply {
-            setColor(Color.WHITE)
-            style = Paint.Style.STROKE
+            setColor(color)
+            style = Paint.Style.FILL_AND_STROKE
         }
     }
 }

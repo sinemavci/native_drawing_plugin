@@ -34,11 +34,13 @@ class PaintBoxView @JvmOverloads constructor(
 
     private var isPaintBoxViewEnable = true
 
+    private var strokeColor: Int = Color.BLACK
+
     // Default paint
     private val paintDefaults = Paint().apply {
         isAntiAlias = true
         isDither = true
-        color = Color.BLACK
+        color = strokeColor
         style = Paint.Style.STROKE
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
@@ -239,7 +241,7 @@ class PaintBoxView @JvmOverloads constructor(
     }
 
     fun setStrokeColor(color: Int) {
-        paintDefaults.color = color
+        strokeColor = color
     }
 
     fun setStrokeWidth(widthPx: Float) {
@@ -343,7 +345,7 @@ class PaintBoxView @JvmOverloads constructor(
 
     fun setPaintMode(paintMode: PaintMode) {
         tool = PaintToolFactory.create(paintMode)
-        currentPaint = tool.createPaint(currentPaint)
+        currentPaint = tool.createPaint(currentPaint, strokeColor)
     }
 
     fun getPaintMode(): PaintMode {

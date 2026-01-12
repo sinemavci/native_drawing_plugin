@@ -18,9 +18,9 @@ class PenTool : IPaintTool {
         TODO("Not yet implemented")
     }
 
-    override fun createPaint(paint: Paint): Paint {
+    override fun createPaint(paint: Paint, color: Int): Paint {
         return paint.apply {
-            color = android.graphics.Color.BLACK
+            setColor(color)
         }
     }
 }

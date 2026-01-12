@@ -12,5 +12,5 @@ interface IPaintTool {
 
     fun onEnd()
 
-    fun createPaint(paint: Paint): Paint
+    fun createPaint(paint: Paint, color: Int): Paint
 }
