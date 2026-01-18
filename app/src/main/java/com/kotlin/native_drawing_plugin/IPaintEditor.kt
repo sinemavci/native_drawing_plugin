@@ -1,6 +1,8 @@
 package com.kotlin.native_drawing_plugin
 
 import android.graphics.Bitmap
+import android.graphics.Color
+import androidx.core.graphics.toColor
 
 abstract class IPaintEditor {
     open fun redo() {}
@@ -25,6 +27,12 @@ abstract class IPaintEditor {
 
     open fun getPaintMode(): PaintMode {
         return PaintMode.PEN
+    }
+
+    open fun setStrokeColor(color: Color) {}
+
+    open fun getStrokeColor(): Color {
+        return Color.BLACK.toColor()
     }
 
 }

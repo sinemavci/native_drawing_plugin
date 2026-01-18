@@ -18,7 +18,6 @@ import com.kotlin.native_drawing_plugin.export_util.ExportUtil
 import com.kotlin.native_drawing_plugin.tool.IPaintTool
 import com.kotlin.native_drawing_plugin.tool.PaintToolFactory
 import com.kotlin.native_drawing_plugin.tool.PenTool
-import kotlinx.coroutines.flow.MutableStateFlow
 import java.io.File
 import java.io.FileOutputStream
 
@@ -197,7 +196,7 @@ class PaintBoxView @JvmOverloads constructor(
     // PUBLIC API
     // -------------------------------------------------------------------------
 
-    fun clear() {
+    internal fun clear() {
         strokes.clear()
         extraCanvas?.drawColor(Color.WHITE)
         currentPath.reset()
@@ -240,12 +239,17 @@ class PaintBoxView @JvmOverloads constructor(
         }
     }
 
-    fun setStrokeColor(color: Int) {
-        strokeColor = color
+    internal fun setStrokeColor(color: Color) {
+        strokeColor = color.toArgb()
+        currentPaint.setColor(strokeColor)
     }
 
-    fun setStrokeWidth(widthPx: Float) {
-        paintDefaults.strokeWidth = widthPx
+    internal fun getStrokeColor(): Color {
+        return strokeColor.toColor()
+    }
+
+    internal fun setStrokeWidth(widthPx: Float) {
+        currentPaint.strokeWidth = widthPx
     }
     @SuppressLint("WrongThread")
     private fun bitmapToFile(
@@ -307,12 +311,12 @@ class PaintBoxView @JvmOverloads constructor(
         }
     }
 
-    fun export(path: String, mimeType: MimeType, fileName: String?) {
+    internal fun export(path: String, mimeType: MimeType, fileName: String?) {
         val bitmap = extraBitmap?.copy(extraBitmap!!.config!!, false)
         bitmapToFile(bitmap, path, mimeType, fileName)
     }
 
-    fun import(bitmap: Bitmap) {
+    internal fun import(bitmap: Bitmap) {
         if(!isPaintBoxViewEnable) return
         // Clear history
 //        strokes.clear()
@@ -335,20 +339,20 @@ class PaintBoxView @JvmOverloads constructor(
         redrawSurface()
     }
 
-    fun setEnable(isEnable: Boolean) {
+    internal fun setEnable(isEnable: Boolean) {
         isPaintBoxViewEnable = isEnable
     }
 
-    fun isEnable(): Boolean {
+    internal fun isEnable(): Boolean {
         return isPaintBoxViewEnable
     }
 
-    fun setPaintMode(paintMode: PaintMode) {
+    internal fun setPaintMode(paintMode: PaintMode) {
         tool = PaintToolFactory.create(paintMode)
         currentPaint = tool.createPaint(currentPaint, strokeColor)
     }
 
-    fun getPaintMode(): PaintMode {
+    internal fun getPaintMode(): PaintMode {
         return tool.paintMode
     }
 }

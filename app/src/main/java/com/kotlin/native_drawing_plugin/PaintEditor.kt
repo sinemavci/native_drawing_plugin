@@ -1,6 +1,7 @@
 package com.kotlin.native_drawing_plugin
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 
@@ -72,6 +73,14 @@ class PaintEditor(
 
     override fun getPaintMode(): PaintMode {
         return paintBoxView.getPaintMode()
+    }
+
+    override fun setStrokeColor(color: Color) {
+        paintBoxView.setStrokeColor(color)
+    }
+
+    override fun getStrokeColor(): Color {
+        return paintBoxView.getStrokeColor()
     }
 
 }
