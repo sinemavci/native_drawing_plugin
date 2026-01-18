@@ -83,4 +83,12 @@ class PaintEditor(
         return paintBoxView.getStrokeColor()
     }
 
+    override fun setStrokeWidth(strokeWidth: Double) {
+        paintBoxView.setStrokeWidth(strokeWidth.toFloat())
+    }
+
+    override fun getStrokeWidth(): Double {
+        return paintBoxView.getStrokeWidth()
+    }
+
 }

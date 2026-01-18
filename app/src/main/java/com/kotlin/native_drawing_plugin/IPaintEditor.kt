@@ -35,4 +35,10 @@ abstract class IPaintEditor {
         return Color.BLACK.toColor()
     }
 
+    open fun setStrokeWidth(strokeWidth: Double) {}
+
+    open fun getStrokeWidth(): Double {
+        return 12.0
+    }
+
 }

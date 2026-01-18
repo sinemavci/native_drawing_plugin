@@ -140,7 +140,7 @@ class PaintBoxView @JvmOverloads constructor(
     private fun startStroke(x: Float, y: Float, pressure: Float) {
         currentPath = Path()
         currentPath.moveTo(x, y)
-        currentPaint.strokeWidth = paintDefaults.strokeWidth * pressure
+        currentPaint.strokeWidth = currentPaint.strokeWidth * pressure
 
         lastX = x
         lastY = y
@@ -250,7 +250,15 @@ class PaintBoxView @JvmOverloads constructor(
 
     internal fun setStrokeWidth(widthPx: Float) {
         currentPaint.strokeWidth = widthPx
+        currentPaint.apply {
+            strokeWidth = widthPx
+        }
     }
+
+    internal fun getStrokeWidth(): Double {
+        return currentPaint.strokeWidth.toDouble()
+    }
+
     @SuppressLint("WrongThread")
     private fun bitmapToFile(
         bitmap: Bitmap?,
