@@ -10,10 +10,13 @@ import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.annotation.RequiresApi
+import android.graphics.Color
+import androidx.core.graphics.blue
 import kotlin.collections.mutableListOf
 import kotlin.math.abs
 import androidx.core.graphics.createBitmap
-import androidx.core.graphics.toColor
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import com.kotlin.native_drawing_plugin.export_util.ExportUtil
 import com.kotlin.native_drawing_plugin.tool.IPaintTool
 import com.kotlin.native_drawing_plugin.tool.PaintToolFactory
@@ -33,9 +36,9 @@ class PaintBoxView @JvmOverloads constructor(
 
     private var isPaintBoxViewEnable = true
 
-    private var strokeColor: Int = Color.BLACK
+    private var strokeColor: Int = Color.BLUE
 
-    // Default paint
+    // Default pai
     private val paintDefaults = Paint().apply {
         isAntiAlias = true
         isDither = true
@@ -43,7 +46,7 @@ class PaintBoxView @JvmOverloads constructor(
         style = Paint.Style.STROKE
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
-        strokeWidth = 12f
+        strokeWidth = 40f
     }
 
     private data class Stroke(val path: Path, val paint: Paint)
@@ -245,7 +248,7 @@ class PaintBoxView @JvmOverloads constructor(
     }
 
     internal fun getStrokeColor(): Color {
-        return strokeColor.toColor()
+        return Color.valueOf(strokeColor.red.toFloat(), strokeColor.green.toFloat(), strokeColor.blue.toFloat())
     }
 
     internal fun setStrokeWidth(widthPx: Float) {
