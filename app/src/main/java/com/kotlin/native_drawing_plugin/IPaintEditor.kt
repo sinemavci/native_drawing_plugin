@@ -9,7 +9,7 @@ abstract class IPaintEditor {
     open fun undo() {}
     open fun reset() {}
 
-    open fun import(bitmap: Bitmap) {}
+    open fun import(path: String, width: Double?, height: Double?) {}
 
     open fun export(path: String, mimeType: MimeType, fileName: String?) {}
 

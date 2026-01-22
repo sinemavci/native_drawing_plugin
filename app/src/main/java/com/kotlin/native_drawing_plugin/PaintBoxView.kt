@@ -11,6 +11,7 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.annotation.RequiresApi
 import android.graphics.Color
+import androidx.exifinterface.media.ExifInterface
 import androidx.core.graphics.blue
 import kotlin.collections.mutableListOf
 import kotlin.math.abs
@@ -327,25 +328,47 @@ class PaintBoxView @JvmOverloads constructor(
         bitmapToFile(bitmap, path, mimeType, fileName)
     }
 
-    internal fun import(bitmap: Bitmap) {
+    internal fun import(path: String, width: Double?, height: Double?) {
         if(!isPaintBoxViewEnable) return
-        // Clear history
-//        strokes.clear()
-//        undoStrokes.clear()
+        val bitmap = BitmapFactory.decodeFile(path)
+        val normalizedBitmap = normalizeBitmap(bitmap, maxSize = 2048)
 
-        // Recreate offscreen buffer if needed
+        val exif = ExifInterface(path)
+        val orientation = exif.getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_NORMAL
+        )
+
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.postScale(-1f, 1f)
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.postScale(1f, -1f)
+        }
+
+        val finalBitmap =  Bitmap.createBitmap(
+            normalizedBitmap,
+            0,
+            0,
+            width?.toInt() ?: normalizedBitmap.width,
+            height?.toInt() ?: normalizedBitmap.height,
+            matrix,
+            true
+        )
         if (extraBitmap == null ||
-            extraBitmap?.width != bitmap.width ||
-            extraBitmap?.height != bitmap.height
+            extraBitmap?.width != finalBitmap.width ||
+            extraBitmap?.height != finalBitmap.height
         ) {
             extraBitmap?.recycle()
-            extraBitmap = createBitmap(bitmap.width, bitmap.height)
+            extraBitmap = createBitmap(finalBitmap.width, finalBitmap.height)
             extraCanvas = Canvas(extraBitmap!!)
         }
 
         // Draw imported bitmap
         extraCanvas?.drawColor(Color.WHITE)
-        extraCanvas?.drawBitmap(bitmap, 0f, 0f, null)
+        extraCanvas?.drawBitmap(finalBitmap, 0f, 0f, null)
 
         redrawSurface()
     }

@@ -50,9 +50,8 @@ class PaintEditor(
         paintBoxView.reset()
     }
 
-    override fun import(bitmap: Bitmap) {
-        val normalizedBitmap = normalizeBitmap(bitmap, maxSize = 2048)
-        paintBoxView.import(normalizedBitmap)
+    override fun import(path: String, width: Double?, height: Double?) {
+        paintBoxView.import(path, width, height)
     }
 
     override fun export(path: String, mimeType: MimeType, fileName: String?) {
