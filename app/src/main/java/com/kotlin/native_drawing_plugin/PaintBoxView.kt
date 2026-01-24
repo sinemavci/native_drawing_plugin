@@ -25,6 +25,11 @@ import com.kotlin.native_drawing_plugin.tool.PenTool
 import java.io.File
 import java.io.FileOutputStream
 
+sealed class DrawAction {
+    data class StrokeAction(val path: Path, val paint: Paint) : DrawAction()
+    data class ImageAction(val bitmap: Bitmap, val matrix: Matrix) : DrawAction()
+}
+
 class PaintBoxView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -52,8 +57,8 @@ class PaintBoxView @JvmOverloads constructor(
 
     private data class Stroke(val path: Path, val paint: Paint)
 
-    // All completed strokes
-    private val strokes = mutableListOf<Stroke>()
+    private val actions = mutableListOf<DrawAction>()
+    private val undoneActions = mutableListOf<DrawAction>()
 
     // Current drawing path
     private var currentPath = Path()
@@ -62,8 +67,6 @@ class PaintBoxView @JvmOverloads constructor(
     // Offscreen cache
     private var extraBitmap: Bitmap? = null
     private var extraCanvas: Canvas? = null
-
-    private var undoStrokes = mutableListOf<Stroke>()
 
     // Touch smoothing
     private var lastX = 0f
@@ -165,7 +168,9 @@ class PaintBoxView @JvmOverloads constructor(
         // Save stroke
         val savedPath = Path(currentPath)
         val savedPaint = Paint(currentPaint)
-        strokes.add(Stroke(savedPath, savedPaint))
+        actions.add(
+            DrawAction.StrokeAction(savedPath, savedPaint)
+        )
 
         // Draw to cached bitmap
         extraCanvas?.drawPath(savedPath, savedPaint)
@@ -196,41 +201,28 @@ class PaintBoxView @JvmOverloads constructor(
         holder.unlockCanvasAndPost(canvas)
     }
 
-    // -------------------------------------------------------------------------
-    // PUBLIC API
-    // -------------------------------------------------------------------------
-
-    internal fun clear() {
-        strokes.clear()
-        extraCanvas?.drawColor(Color.WHITE)
-        currentPath.reset()
-        redrawSurface()
-    }
-
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     internal fun undo() {
-        if (strokes.isNotEmpty()) {
-            val stroke = strokes[strokes.size - 1]
-            undoStrokes.addFirst(stroke)
-            strokes.remove(stroke)
+        if (actions.isNotEmpty()) {
+            undoneActions.add(actions.removeLast())
             redrawCachedBitmap()
             redrawSurface()
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     internal fun redo() {
-        if(undoStrokes.isNotEmpty()) {
-            strokes.add(undoStrokes[0])
-            undoStrokes.removeAt(0)
+        if (undoneActions.isNotEmpty()) {
+            actions.add(undoneActions.removeLast())
             redrawCachedBitmap()
             redrawSurface()
         }
     }
 
     internal fun reset() {
-        if (strokes.isNotEmpty()) {
-            strokes.clear()
-            undoStrokes.clear()
+        if (actions.isNotEmpty()) {
+            actions.clear()
+            undoneActions.clear()
             redrawCachedBitmap()
             redrawSurface()
         }
@@ -238,8 +230,22 @@ class PaintBoxView @JvmOverloads constructor(
 
     private fun redrawCachedBitmap() {
         extraCanvas?.drawColor(Color.WHITE)
-        for (s in strokes) {
-            extraCanvas?.drawPath(s.path, s.paint)
+        for (action in actions) {
+            when (action) {
+                is DrawAction.ImageAction -> {
+                    extraCanvas?.drawBitmap(
+                        action.bitmap,
+                        action.matrix,
+                        null
+                    )
+                }
+                is DrawAction.StrokeAction -> {
+                    extraCanvas?.drawPath(
+                        action.path,
+                        action.paint
+                    )
+                }
+            }
         }
     }
 
@@ -369,6 +375,10 @@ class PaintBoxView @JvmOverloads constructor(
         // Draw imported bitmap
         extraCanvas?.drawColor(Color.WHITE)
         extraCanvas?.drawBitmap(finalBitmap, 0f, 0f, null)
+        actions.add(
+            DrawAction.ImageAction(finalBitmap, Matrix())
+        )
+        redrawCachedBitmap()
 
         redrawSurface()
     }
