@@ -11,7 +11,7 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.annotation.RequiresApi
 import android.graphics.Color
-import androidx.exifinterface.media.ExifInterface
+import android.media.ExifInterface
 import androidx.core.graphics.blue
 import kotlin.collections.mutableListOf
 import kotlin.math.abs
