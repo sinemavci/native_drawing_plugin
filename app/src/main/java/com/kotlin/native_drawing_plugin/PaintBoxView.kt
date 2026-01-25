@@ -12,12 +12,10 @@ import android.view.SurfaceView
 import androidx.annotation.RequiresApi
 import android.graphics.Color
 import android.media.ExifInterface
-import androidx.core.graphics.blue
 import kotlin.collections.mutableListOf
 import kotlin.math.abs
 import androidx.core.graphics.createBitmap
-import androidx.core.graphics.green
-import androidx.core.graphics.red
+import androidx.core.graphics.toColor
 import com.kotlin.native_drawing_plugin.export_util.ExportUtil
 import com.kotlin.native_drawing_plugin.tool.IPaintTool
 import com.kotlin.native_drawing_plugin.tool.PaintToolFactory
@@ -255,7 +253,7 @@ class PaintBoxView @JvmOverloads constructor(
     }
 
     internal fun getStrokeColor(): Color {
-        return Color.valueOf(strokeColor.red.toFloat(), strokeColor.green.toFloat(), strokeColor.blue.toFloat())
+        return strokeColor.toColor()
     }
 
     internal fun setStrokeWidth(widthPx: Float) {
